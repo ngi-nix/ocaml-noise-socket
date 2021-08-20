@@ -3,10 +3,11 @@
 
   # we're using this commit since the required dependencies aren't in master yet
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/5d74941c45cdb8d4a180d19642049aaec14f325d";
+  inputs.nixpkgs-angstrom = { url = "github:NixOS/nixpkgs/51d90811235cb5557e76f5d9665cd3337bc82e53"; flake = false; };
 
   inputs.flake-compat = { url = "github:edolstra/flake-compat"; flake = false; };
 
-  outputs = { self, nixpkgs, ... }:
+  outputs = { self, nixpkgs, ... }@inputs:
     let
       supportedSystems = [
         "x86_64-linux"
@@ -41,11 +42,15 @@
               with prevOcamlPackages;
               let
                 ocamlPackages = {
-                  inherit buildDunePackage angstrom lwt noise ounit stdint;
+                  inherit buildDunePackage lwt noise ounit stdint;
+                  inherit alcotest;
                   inherit ocaml;
                   inherit findlib;
                   inherit ocamlbuild;
                   inherit opam-file-format;
+
+                  # ugly IFD because we need older angstrom
+                  inherit ((import inputs.nixpkgs-angstrom { system = "x86_64-linux"; }).pkgs.ocamlPackages) angstrom;
 
                   noise-socket =
                     buildDunePackage rec {
@@ -83,6 +88,14 @@
               allOcamlPackages // {
                 ocamlPackages = allOcamlPackages.${defaultOcamlPackages};
               };
+
+        devShell.x86_64-linux = nixpkgsFor.x86_64-linux.ocamlPackages.noise-socket;
+          #let
+          #  pkgs = nixpkgs.legacyPackages.x86_64-linux;
+          #in
+          #  pkgs.mkShell {
+          #    packages = with pkgs; [ opam pkgconfig gcc gnumake gmp solo5 ocamlPackages.dune_2 ocamlPackages.ocaml ];
+          #  };
 
         packages =
           forAllSystems (

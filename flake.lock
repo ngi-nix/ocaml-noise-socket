@@ -32,10 +32,28 @@
         "type": "github"
       }
     },
+    "nixpkgs-angstrom": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1532850441,
+        "narHash": "sha256-i/Sf8of1sobG2/hOrHjw6hb39WSsROfqoQyFKSETKw0=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "51d90811235cb5557e76f5d9665cd3337bc82e53",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "51d90811235cb5557e76f5d9665cd3337bc82e53",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "flake-compat": "flake-compat",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "nixpkgs-angstrom": "nixpkgs-angstrom"
       }
     }
   },
